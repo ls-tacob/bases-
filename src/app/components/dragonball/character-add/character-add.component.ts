@@ -1,25 +1,22 @@
-import {Component, signal} from '@angular/core';
+import {Component, computed, output, signal} from '@angular/core';
 import {Character} from '../../../interfaces/character.interface';
-import {CharacterListComponent} from '../character-list/character-list.component';
+
 
 @Component({
   selector: 'dragonball-character-add',
-  imports: [CharacterListComponent],
+  imports: [],
   templateUrl: './character-add.component.html'
 })
 export class CharacterAddComponent {
   name = signal('');
   power = signal(0);
 
+  newCharacter = output<Character>();
+
   characters = signal<Character[]>([
     { id: 1, name: 'goku', power: 10000 },
-    { id: 2, name: 'vegeta', power: 8000 },
-    /* { id: 3, name: 'piccolo', power: 3000 },
-  { id: 4, name: 'yamcha', power: 500 },*/
+    { id: 2, name: 'vegeta', power: 8000 }
   ]);
-
-
-
 
 
   addCharacter() {
@@ -27,13 +24,12 @@ export class CharacterAddComponent {
       return;
     }
     const newCharacter: Character = {
-      id: this.characters().length + 1,
+      id: Math.floor(Math.random() * 1000),
       name: this.name(),
       power: this.power(),
     };
-    console.log({ newCharacter });
 
-    //this.characters.update((list) => [...list, newCharacter]);
+    this.newCharacter.emit(newCharacter)
     this.resetFields();
   }
 
@@ -41,4 +37,10 @@ export class CharacterAddComponent {
     this.name.set('');
     this.power.set(0);
   }
+
+  powerClasses = computed(() => {
+    return {
+      'text-danger': true,
+    };
+  });
 }
